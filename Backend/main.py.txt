@@ -1,0 +1,57 @@
+from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
+from typing import List, Optional
+import json
+import os
+
+app = FastAPI(
+    title="LensNinja API",
+    description="FastAPI backend for LensNinja (Project Lumen)",
+    version="0.1.0"
+)
+
+# Allow frontend to access backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with frontend domain in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Load mock data (replace this with scraped results or DB calls)
+DATA_PATH = os.path.join("data", "scraped_json", "sample_data.json")
+
+def load_lens_data():
+    if os.path.exists(DATA_PATH):
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+@app.get("/")
+def read_root():
+    return {"message": "LensNinja backend is live!"}
+
+@app.get("/search")
+def search_lenses(
+    query: Optional[str] = Query(None, description="Keyword search"),
+    condition: Optional[str] = Query(None, description="Condition filter (e.g. Used, Like New)"),
+    brand: Optional[str] = Query(None, description="Brand filter (e.g. Canon, Nikon)"),
+    price_min: Optional[float] = Query(None),
+    price_max: Optional[float] = Query(None)
+):
+    results = load_lens_data()
+
+    # Filter based on query and dropdowns
+    if query:
+        results = [r for r in results if query.lower() in r.get("title", "").lower()]
+    if condition:
+        results = [r for r in results if r.get("condition", "").lower() == condition.lower()]
+    if brand:
+        results = [r for r in results if brand.lower() in r.get("title", "").lower()]
+    if price_min is not None:
+        results = [r for r in results if r.get("price", 0) >= price_min]
+    if price_max is not None:
+        results = [r for r in results if r.get("price", 0) <= price_max]
+
+    return {"results": results}

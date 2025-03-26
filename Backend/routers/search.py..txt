@@ -1,0 +1,29 @@
+from fastapi import APIRouter, Query
+from typing import List, Optional
+
+router = APIRouter()
+
+@router.get("/search")
+def search_lenses(
+    query: str = Query(..., description="Search term for lens"),
+    condition: Optional[str] = Query(None, description="Condition filter"),
+    min_price: Optional[float] = Query(None),
+    max_price: Optional[float] = Query(None)
+):
+    # This is just a placeholder
+    sample_data = [
+        {
+            "title": "Canon EF 50mm f/1.8",
+            "price": 99.99,
+            "condition": "Used - Good",
+            "source": "eBay"
+        },
+        {
+            "title": "Tamron 70-300mm f/4-5.6",
+            "price": 149.00,
+            "condition": "Used - Excellent",
+            "source": "MPB"
+        }
+    ]
+
+    return {"results": sample_data}
