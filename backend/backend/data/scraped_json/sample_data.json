@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Canon EF 50mm f/1.8 STM",
+    "price": 89.99,
+    "condition": "Used",
+    "brand": "Canon",
+    "source": "eBay"
+  },
+  {
+    "title": "Tamron 70-300mm f/4-5.6 Di LD",
+    "price": 120.00,
+    "condition": "Like New",
+    "brand": "Tamron",
+    "source": "MPB"
+  }
+]
